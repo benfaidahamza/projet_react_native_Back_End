@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Users = require('../../../models/User');
 const {verifyToken } = require('./jwt');
+const bcrypt = require('bcrypt');
 
 router.get('/', verifyToken, (req, res) => {
   Users.find()
@@ -53,6 +54,45 @@ router.delete('/:id', verifyToken, (req, res) => {
   Users.findByIdAndDelete(req.params.id)
     .then(() => res.json({ success: 'Utilisateur supprimé avec succès' }))
     .catch(err => res.status(404).json({ userNotFound: 'Utilisateur non trouvé...' }));
+});
+
+router.put('/password/:id', verifyToken, (req, res) => {
+  const userId = req.params.id;
+  const { oldPassword, newPassword } = req.body;
+  Users.findById(userId)
+    .then(user => {
+      console.log(user)
+      if (!user) {
+        return res.status(404).json({ noUserFound: 'Utilisateur introuvable.' });
+      }
+      console.log(user.motDePasse)
+      bcrypt.compare(oldPassword, user.motDePasse)
+        .then(match => {
+          if (!match) {
+            return res.status(401).json({ incorrectPassword: 'Mot de passe incorrect.' });
+          }
+          bcrypt.hash(newPassword, 10)
+            .then(hashedPassword => {
+              user.motDePasse = hashedPassword;
+              user.save()
+                .then(updatedUser => {
+                  res.json({ msg: 'Utilisateur bien modifié!' })
+                })
+                .catch(err => {
+                  res.status(500).json({ error: 'Une erreur s\'est produite lors de la mise à jour du mot de passe.' });
+                });
+            })
+            .catch(err => {
+              res.status(500).json({ error: 'Une erreur s\'est produite lors du hachage du nouveau mot de passe.' });
+            });
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'Une erreur s\'est produite lors de la comparaison des mots de passe.' });
+        });
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'Une erreur s\'est produite lors de la recherche de l\'utilisateur.' });
+    });
 });
 
 module.exports = router;
