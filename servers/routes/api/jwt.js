@@ -16,7 +16,6 @@ function verifyToken(req, res, next) {
     }
     
     jwt.verify(token, jwt_secret, (err, decoded) => {
-        console.log(err)
       if (err) {
         return res.status(403).json({ message: 'Accès non autorisé. Jeton invalide.' });
       }

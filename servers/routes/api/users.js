@@ -18,7 +18,6 @@ router.get('/:id', verifyToken, (req, res) => {
 
 router.post('/CreateUser', verifyToken, (req, res) => {
   Users.create(req.body)
-  console.log(req.body)
     .then(user => res.json({ msg: 'User bien ajouté !' }))
     .catch(err => res.status(400).json({ error: 'Impossible d\'ajouter le produit' }));
 });
@@ -61,11 +60,9 @@ router.put('/password/:id', verifyToken, (req, res) => {
   const { oldPassword, newPassword } = req.body;
   Users.findById(userId)
     .then(user => {
-      console.log(user)
       if (!user) {
         return res.status(404).json({ noUserFound: 'Utilisateur introuvable.' });
       }
-      console.log(user.motDePasse)
       bcrypt.compare(oldPassword, user.motDePasse)
         .then(match => {
           if (!match) {

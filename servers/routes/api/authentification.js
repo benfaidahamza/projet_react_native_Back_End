@@ -8,15 +8,12 @@ router.post('/login', (req, res) => {
 
     const email = req.body.email;
     const motDePasse = req.body.motDePasse;
-    console.log(email)
 
     Users.findOne({ email })
         .then(user => {
             if (!user) {
                 return res.status(404).json({ noUserFound: 'Pas d\'utilisateur trouvé avec cet identifiant.' });
             }
-            console.log(user.motDePasse)
-            console.log(motDePasse)
             bcrypt.compare(motDePasse, user.motDePasse)
                 .then(match => {
                     if (match) {
