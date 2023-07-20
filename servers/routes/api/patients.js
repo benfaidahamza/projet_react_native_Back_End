@@ -68,4 +68,27 @@ router.delete('/:id', verifyToken, (req, res) => {
     .catch(err => res.status(404).json({ patientNotFound: 'Patient non trouvé...' }));
 });
 
+router.post('/:id/medicaments', async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { nom, fois_par_jour, duree } = req.body;
+      const patient = await Patients.findById(userId);
+  
+      if (!patient) {
+        return res.status(404).json({ message: 'Patient non trouvé...' });
+      }
+  
+      const nouveauMedicament = {
+        nom,
+        fois_par_jour,
+        duree,
+      };
+      patient.traitements.push(nouveauMedicament);
+      const patientMisAJour = await patient.save();
+      res.json(patientMisAJour);
+    } catch (err) {
+      res.status(500).json({ message: 'Une erreur est survenue lors de l\'ajout du médicament.', error: err });
+    }
+  });
+
 module.exports = router;
