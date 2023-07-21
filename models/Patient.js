@@ -30,6 +30,9 @@ const patientSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imageUrl: {
+    type: String,
+  },
   traitements: [
     {
       nom: {

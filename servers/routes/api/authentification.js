@@ -5,10 +5,8 @@ const {generateToken } = require('./jwt');
 const bcrypt = require('bcrypt');
 
 router.post('/login', (req, res) => {
-
     const email = req.body.email;
     const motDePasse = req.body.motDePasse;
-
     Users.findOne({ email })
         .then(user => {
             if (!user) {
