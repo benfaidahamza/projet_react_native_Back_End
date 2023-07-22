@@ -12,11 +12,6 @@ router.get('/', verifyToken, (req, res) => {
 
 router.get('/:id', verifyToken, (req, res) => {
     Patients.findById(req.params.id)
-      .populate({
-        path: 'traitements.medicament',
-        model: Medicaments,
-        select: 'nom',
-      })
       .then(patient => res.json(patient))
       .catch(err => res.status(404).json({ patientNotFound: 'Patient non trouvé...' }));
   });
