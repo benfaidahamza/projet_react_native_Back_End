@@ -52,6 +52,7 @@ router.get('/prenom/:prenom', verifyToken, (req, res) => {
 });
 
 router.put('/:id', verifyToken, (req, res) => {
+  console.log(req.body)
   Patients.findByIdAndUpdate(req.params.id, req.body)
     .then(patient => res.json({ msg: 'Utilisateur bien modifié!' }))
     .catch(err => res.status(400).json({ error: 'Erreur lors de la mise à jour du patient...' }));

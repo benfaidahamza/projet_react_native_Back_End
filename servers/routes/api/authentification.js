@@ -16,7 +16,7 @@ router.post('/login', (req, res) => {
                 .then(match => {
                     if (match) {
                         const token = generateToken(user);
-                        res.json({ token, role: user.role });
+                        res.json({ token, role: user.role, nom: user.nom});
                     } else {
                         res.status(401).json({ message: 'Mot de passe incorrect.' });
                     }
